@@ -26,7 +26,7 @@ cd ~ && pnpm create next-app@latest <repo-name> --ts --eslint --tailwind --app -
 - Create the public GitHub repo `<your-github>/<repo-name>`; push; check the About sidebar shows "MIT license".
 
 ### 0.4 Human data task (prerequisite for ride-ingest 3.4a)
-Export into `fixtures-raw/` (gitignored): the **sample pair** (≥ 1 km shared climb, a lead change), **3 real pairs** with hand-labelled shared stretch endpoints and finish gap, **one multisport** file, **one truncated** file, and **~30 rides** for the sample archive (P1). The Garmin MCP may be used from your **user-level** `~/.kiro/settings/mcp.json` (never the repo one) for this, or export manually.
+**Done Nov 16:** the sample pair and a 7-ride archive are scrubbed (1 km start/end zone) in `public/samples/`; raw FIT files and the private zone list are in `fixtures-raw/`. Still to export into `fixtures-raw/` (gitignored): **3 real pairs** with hand-labelled shared stretch endpoints and finish gap, **one multisport** file, **one truncated** file, and **~30 rides** for the sample archive (P1). The Garmin MCP may be used from your **user-level** `~/.kiro/settings/mcp.json` (never the repo one) for this, or export manually.
 
 ### 0.5 Hook format gate (spike S0) — the hooks in `.kiro/hooks/` are UNVERIFIED
 The committed hook files use a guessed `v1` JSON shape. Kiro may not load them. Before any spec task:

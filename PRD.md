@@ -420,7 +420,7 @@ Dropped. See Non-goals and Decisions log.
 
 | Date | Focus | Exit criterion |
 |---|---|---|
-| **Sun Nov 15–Mon Nov 16** | Foundation. ~~Builder decides D0 (name)~~ done: CloneRider. Request the Kiro credits. Scaffold + first commit + public repo. **Human task:** pick the sample pair (≥ 1 km shared climb, lead change), 3 real labelled pairs and a ~30-ride sample archive into `fixtures-raw/` (gitignored). Spikes S0, S3 | Name chosen; repo public with `.kiro/`; credits requested; fixtures chosen |
+| **Sun Nov 15–Mon Nov 16** | Foundation. ~~Builder decides D0 (name)~~ done: CloneRider. Request the Kiro credits. Scaffold + first commit + public repo. **Human task:** ~~pick the sample pair~~ done (`public/samples/`, 1 km scrub); 3 real labelled pairs and a ~30-ride sample archive into `fixtures-raw/` (gitignored). Spikes S0, S3 | Name chosen; repo public with `.kiro/`; credits requested; fixtures chosen |
 | Tue Nov 17 | Hooks rebuilt in the Kiro UI (S0). Spikes S1, S2, S4, S6. Kiro **generates `haunted-ui` and `ride-ingest` specs** from the PRD | Spikes logged; 2 specs exist in Kiro |
 | **Wed Nov 18** | **Walking skeleton deployed:** landing, sample FIT parsed in the worker, naive identity alignment on the sample, ghost TripsLayer animating on the prod URL. Kiro generates `ghost-alignment`, `ghost-narrator`, `replay-viewer` specs | Prod URL live |
 | Thu Nov 19 | `ride-ingest` core (FIT + GPX, cleaning, pauses, privacy breaks). **`ghost-lab` MCP** with `parse_ride` | Ingest PBT green; MCP connected |
@@ -464,7 +464,7 @@ Dropped. See Non-goals and Decisions log.
 - **Q1.** Trademark: USPTO search for the chosen name (Classes 9, 28, 42) + App Store/Play search; CloneRider (decided).
 - **Q2.** Did the builder register for Kiroween 2025? If yes, "Best Ghost of Kiroween Past" may apply.
 - **Q3.** Answered by spike S3: Gateway speech availability and the cheapest structured-output narrator model.
-- **Q4.** Which rides become the sample pair and the sample archive? (Human task, Nov 16.)
+- **Q4.** ~~Which rides become the sample pair and the sample archive?~~ Done Nov 16: present `2026-10-30`, ghost `2026-05-08`, plus a 7-ride archive, scrubbed with a 1 km start/end zone (`public/samples/README.md`). Still open: 3 hand-labelled real pairs, one multisport and one truncated file, and growing the archive toward ~30 rides.
 - **Q5.** Does the builder's bike computer honour course timestamps as a pacer? Test the exported course on Nov 27 (no brand shown in the video).
 - **Q6.** `@garmin/fitsdk` (official, non-OSI licence) or `fit-file-parser` (MIT) as the shipped decoder? Default: official SDK as a dependency. If S5 finds no encoder, decide the export path then.
 - **Q7.** Is a Kiro CLI key for CI available on the builder's plan? If not, the geo-reviewer runs as a documented local pre-push step.
