@@ -6,6 +6,8 @@ inclusion: always
 
 No `src/` directory (the scaffold uses `--no-src-dir`). Create folders only when a task needs them.
 
+**Contracts already exist** (see `docs/ARCHITECTURE.md`): `lib/*/types.ts`, `lib/align/constants.ts`, `lib/narrator/schema.ts`, `lib/api/contracts.ts`, `workers/rideWorkerApi.ts`. Implement against them; if a spec needs a contract change, change the contract file and its test in the same task. `tests/contracts.test.ts` keeps `lib/align/constants.ts` in sync with `geo-math.md`.
+
 ```
 /
 ├── app/                          # Next.js App Router
@@ -23,6 +25,8 @@ No `src/` directory (the scaffold uses `--no-src-dir`). Create folders only when
 │   └── ui/                       # Haunted design-system primitives, ghosts/ SVGs
 ├── lib/                          # PURE TypeScript, no React/DOM (runs in worker, tests, MCP)
 │   ├── brand.ts                  # APP_NAME, STORAGE_PREFIX (the only place the product name lives)
+│   ├── result.ts                 # Result<T, E>, ok(), err()
+│   ├── api/contracts.ts          # zod payloads for app/api/* (NarrateRequest/Response, SpeakRequest, ApiError)
 │   ├── ingest/                   # fit.ts, gpx.ts, normalize.ts, pauses.ts, privacy.ts, archive.ts (P1), types.ts
 │   ├── geo/                      # ruler.ts, resample.ts, heading.ts, polyline.ts
 │   ├── align/                    # corridor.ts, runs.ts, routeAxis.ts, gap.ts, climbs.ts, archiveSearch.ts (P1), index.ts
@@ -30,7 +34,8 @@ No `src/` directory (the scaffold uses `--no-src-dir`). Create folders only when
 │   ├── narrator/                 # facts.ts, schema.ts, lexicon.ts, render.ts, validator.ts, template.ts, prompt.ts
 │   └── replay/                   # clock.ts, format.ts, camera.ts, layers.ts, store.ts (zustand)
 ├── workers/
-│   └── ride.worker.ts            # comlink-exposed ingest + align API
+│   ├── rideWorkerApi.ts          # RideWorkerApi: the ONLY surface the UI may call (contract)
+│   └── ride.worker.ts            # comlink-exposes RideWorkerApi
 ├── public/
 │   ├── map/haunted-style.json    # committed, recoloured basemap style
 │   └── samples/                  # Scrubbed sample rides, sample archive, pre-generated narration + audio

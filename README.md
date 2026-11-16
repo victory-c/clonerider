@@ -66,3 +66,5 @@ In development for [Kiroween 2026](https://kiroween.devpost.com/) (Frankenstein 
 
 ## License
 [MIT](LICENSE) © 2026 the project authors
+
+Architecture: see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).

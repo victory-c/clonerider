@@ -110,4 +110,11 @@ Full details with seeds in `docs/PBT_FINDINGS.md`. Spec bugs found in the pre-bu
 - **Next:** in Kiro, the hooks are recreated through the UI, the 5 canonical specs are generated from the PRD, and all implementation is done by Kiro.
 - **Pre-existing code:** none, apart from the `create-next-app` scaffold and OSS dependencies.
 
+### 2026-11-16: Architecture contracts written outside Kiro (disclosure)
+- **Tool:** Claude Code. Not Kiro.
+- **Written:** `docs/ARCHITECTURE.md`; contract-only code: `lib/brand.ts`, `lib/result.ts`, `lib/{ingest,geo,align,export,replay}/types.ts`, `lib/align/constants.ts`, `lib/narrator/schema.ts`, `lib/api/contracts.ts`, `workers/rideWorkerApi.ts`, `tests/contracts.test.ts`, `tests/arbitraries/eps.ts`; config (`vitest.config.mts`, `.prettierrc.json`, `.env.example`, package scripts, pinned dependencies); placeholder routes (`app/page.tsx`, `app/ride/page.tsx`, `app/api/{narrate,speak}/route.ts` returning 501).
+- **Not included:** any algorithm, parsing, alignment, narration, map or UI logic. Every function that does real work is implemented in Kiro from the specs, against these contracts.
+- **Also data prep (not app code):** the sample rides in `public/samples/` were privacy-scrubbed with a throwaway script outside the repo.
+- **Found while doing it:** Next 16 rejects `export const runtime` when `cacheComponents` is on (`tech.md` updated); the `deck.gl` umbrella package pulls ArcGIS/Vaadin and a telemetry postinstall, so only scoped `@deck.gl/*` packages are used.
+
 <!-- `pnpm kiro:log` appends entries below this line from commit trailers. -->

@@ -8,7 +8,7 @@ inclusion: always
 | Concern | Choice |
 |---|---|
 | Framework | Next.js App Router + TypeScript (`strict: true`), scaffolded with `create-next-app`. Deployed on Vercel |
-| Runtime for route handlers | **Node.js** (`export const runtime = 'nodejs'`). **Never the edge runtime** |
+| Runtime for route handlers | **Node.js**, which is the default. **Do not write `export const runtime`**: Next 16 rejects it while `cacheComponents` is on (verified Nov 16, `pnpm build`). Never the edge runtime |
 | Package manager | **pnpm** |
 | Styling | Tailwind CSS with design tokens as CSS variables (see `ui-haunt.md`) |
 | Ride parsing | `@garmin/fitsdk` (FIT decode, and encode for the course export if spike S5 confirms an encoder; behind `FitParser` / `FitCourseWriter` interfaces). GPX via `@tmcw/togeojson` with **`@xmldom/xmldom`'s `DOMParser` injected everywhere** (runtime dependency: Web Workers have no `DOMParser`, so the browser's native one is never used). TCX is P2 |
@@ -25,7 +25,8 @@ inclusion: always
 
 Versions (checked with `npm view`; the review re-checked them on 2026-11-16). Pin exact versions:
 - `@garmin/fitsdk@21.221.0`, `@tmcw/togeojson@7.1.3`, `@xmldom/xmldom@0.9.12` (runtime), `cheap-ruler@4.1.1`, `flatbush@4.7.0`, `comlink@4.4.2`, `zod@4.6.7`, `fflate@0.8.3` (P1)
-- `maplibre-gl@6.18.0`, `deck.gl@9.4.1` (+ `@deck.gl/mapbox@9.4.1`, `@deck.gl/geo-layers@9.4.1`; `@deck.gl/mapbox` peers `@deck.gl/core ~9.4.0`)
+- `maplibre-gl@6.18.0`, `@deck.gl/core@9.4.1`, `@deck.gl/layers@9.4.1`, `@deck.gl/geo-layers@9.4.1`, `@deck.gl/mapbox@9.4.1`. **Never the `deck.gl` umbrella package**: it pulls ArcGIS/Vaadin UI kits and a telemetry postinstall
+- `zustand@5.1.0`, `prettier@3.10.1`. All of the above are installed (Nov 16)
 - `ai@7.0.173`, `@ai-sdk/gateway@4.0.146` (only if `gateway.speech()` is needed)
 - `vitest@5.1.0`, `fast-check@4.10.2`, `@fast-check/vitest@0.5.0` (peer vitest ^4.1 || ^5)
 - `@modelcontextprotocol/sdk@1.32.2` (ghost-lab MCP)
