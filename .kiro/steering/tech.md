@@ -15,7 +15,7 @@ inclusion: always
 | Archive (P1) | Folder input first; ZIP and `.fit.gz` via `fflate` as a stretch |
 | Workers | Module Web Worker + `comlink`; transfer typed arrays (`Transferable`) |
 | Geometry | `cheap-ruler`, `flatbush`. `@turf/*` **only** in tests/oracles |
-| Map | `maplibre-gl` + `deck.gl` (`@deck.gl/mapbox` `MapboxOverlay` with `interleaved: true`, `@deck.gl/geo-layers` `TripsLayer`). Map component via `next/dynamic` with `{ ssr: false }` |
+| Map | `maplibre-gl` (named imports) + `@deck.gl/mapbox` `MapboxOverlay` with **`interleaved: false`** (see S2) + `@deck.gl/geo-layers` `TripsLayer`. MapLibre's worker served from `public/vendor/` via `setWorkerUrl` (S2). Map component via `next/dynamic` with `{ ssr: false }` |
 | Basemap | A committed, pre-recoloured style `public/map/haunted-style.json` that points at OpenFreeMap tiles/glyphs/sprites (no API key). Attribution always visible. Fallback: plain `--void` background |
 | State | `zustand` for the playback store; animation on `requestAnimationFrame`, not React renders |
 | AI | **AI SDK v7** (`ai`) via **Vercel AI Gateway** with plain `"provider/model"` strings from env vars (`NARRATOR_MODEL`, `TTS_MODEL`) |
@@ -31,17 +31,18 @@ Versions (checked with `npm view`; the review re-checked them on 2026-11-16). Pi
 - `vitest@5.1.0`, `fast-check@4.10.2`, `@fast-check/vitest@0.5.0` (peer vitest ^4.1 || ^5)
 - `@modelcontextprotocol/sdk@1.32.2` (ghost-lab MCP)
 
-## Verified APIs (fill in from spikes S0–S6; until a row says VERIFIED, verify with Context7 before writing code)
-| Item | Claim to verify | Status |
+## Verified APIs (spikes run Nov 16 by Claude Code in a throwaway copy of the repo; evidence in `docs/SPIKES.md`)
+| Item | Result | Status |
 |---|---|---|
-| S0 Hooks | File format Kiro writes for IDE hooks; trigger names; whether command hooks get the edited path (STDIN JSON?) | UNVERIFIED |
-| S1 Worker build | `new Worker(new URL('../workers/ride.worker.ts', import.meta.url), { type: 'module' })` + comlink builds with Turbopack and runs on Vercel | UNVERIFIED |
-| S2 Map overlay | `MapboxOverlay({ interleaved: true })` on maplibre-gl 6.18 with TripsLayer and a moving camera | UNVERIFIED |
-| S3a Structured output | v7 exports both `generateText` with `output: Output.object({ schema })` and `generateObject` (seen in the ai@7.0.173 exports); which one the docs recommend | PARTLY CHECKED (exports only) |
-| S3b Speech | `generateSpeech` and `experimental_generateSpeech` are both exported by ai@7.0.173; whether a plain `"provider/model"` string works for speech or `gateway.speech(id)` is required; which speech models the Gateway lists for this team; voice names and instruction parameters | UNVERIFIED |
-| S4 GPX in worker | `@tmcw/togeojson` `gpx()` works on an xmldom Document inside a module worker | UNVERIFIED |
-| S5 FIT encode | `@garmin/fitsdk` exports an `Encoder`; minimal course = file_id + course + lap + records (+ course points) | UNVERIFIED |
-| S6 Basemap | OpenFreeMap dark style name and URL; recoloured copy committed | UNVERIFIED |
+| S0 Hooks | File format Kiro writes for IDE hooks; trigger names; whether command hooks get the edited path | **UNVERIFIED (needs Kiro)** |
+| S1 Worker build | `new Worker(new URL('../workers/x.worker.ts', import.meta.url), { type: 'module' })` + comlink: Turbopack bundles it (via its worker loader) and a production build round-trips in headless Chrome. Turbopack also emits the raw `.ts` as a public asset; harmless (repo is public) | **VERIFIED** |
+| S2 Map overlay | MapLibre 6.18 + `@deck.gl/mapbox` 9.4.1 `TripsLayer` with a moving camera works **only with `interleaved: false`** (overlaid canvas). `interleaved: true` crashes (`reading '_nearZ'`), and 9.4.1 is the latest stable. MapLibre 6 is ESM with **named exports only** (`import { Map, setWorkerUrl } from 'maplibre-gl'`; there is no default export) and it **cannot find its own worker under Turbopack**: serve `node_modules/maplibre-gl/dist/maplibre-gl-worker.mjs` (self-contained) from `public/vendor/` and call `setWorkerUrl(new URL('/vendor/<file>', location.origin).href)` before creating the map | **VERIFIED** |
+| S3a Structured output | `generateText({ model, output: Output.object({ schema }) })` → `result.output`. `generateObject` is **deprecated** (v6 migration guide): do not use it | **VERIFIED (installed docs + types)** |
+| S3b Speech | `generateSpeech({ model, text, voice })` is stable; its `model` type is `string \| SpeechModel`, so a plain Gateway string works (`gateway.speech(id)` also exists). Audio: `result.audio.uint8Array`. Gateway speech ids include `openai/tts-1`, `openai/tts-1-hd`, `elevenlabs/eleven-flash-v2.5`, `google/gemini-3.8-flash-tts`. Not yet called live (needs a key and team access) | **VERIFIED (types); live call pending** |
+| S3c Narrator model | `anthropic/claude-haiku-5.5` is in the Gateway model list (newer and cheaper than 4.5): it is the default | **VERIFIED (types)** |
+| S4 GPX in worker | `@tmcw/togeojson` `gpx()` on an `@xmldom/xmldom` document works in a real browser Web Worker (no native `DOMParser` there) and in Node worker threads. Multiple `<trkseg>` → `MultiLineString` (one line per segment → `segStart`); elevation is the 3rd coordinate; times in `properties.coordinateProperties.times`. 5,240 points ≈ 100 ms | **VERIFIED** |
+| S5 FIT encode | `@garmin/fitsdk` exports `Encoder` (`writeMesg`, `close`). Minimal course = FILE_ID(type `course`) + COURSE + LAP + EVENT(timer start) + RECORDs + EVENT(`stopDisableAll`). Decodes back with 0 errors, integrity OK, positions within 5 mm, exact timestamps. **Gotcha: call `isFIT()`/`checkIntegrity()` before `read()`** (read consumes the stream). Not yet loaded on a real bike computer | **VERIFIED (round-trip); device test pending** |
+| S6 Basemap | `https://tiles.openfreemap.org/styles/dark` (also `positron`, `liberty`, `bright`, `fiord`). Free, no key, no request limit, no cookies; attribution is required and MapLibre adds it automatically from the TileJSON. In the committed recoloured style, keep the source as `"url": "https://tiles.openfreemap.org/planet"` (TileJSON); **never hard-code tile URLs**, which contain a rotating dated planet version | **VERIFIED** |
 
 If S3b fails: decide between a direct provider SDK for the one-time sample audio, or browser voice only. Record the decision here.
 
@@ -61,7 +62,8 @@ If S3b fails: decide between a direct provider SDK for the one-time sample audio
 
 ## AI SDK v7 rules
 - Verify current APIs with the Context7 MCP before writing AI code (v7 renamed things), then record the result above.
-- The model is a string such as `process.env.NARRATOR_MODEL ?? 'anthropic/claude-haiku-4.5'`; confirm the id exists in the Gateway catalog.
+- The model is a string such as `process.env.NARRATOR_MODEL ?? 'anthropic/claude-haiku-5.5'` (in the Gateway list, S3c).
+- Structured output: `generateText` + `Output.object({ schema: NarrationTemplate })`. Never `generateObject` (deprecated).
 - Always set `maxOutputTokens`, `temperature ≤ 0.9` and an abort timeout.
 - Never send coordinates, file names or raw streams to a model. Only `RideFacts`.
 - The Gateway **spend limit** is the real cost guard; the in-memory rate limiter is per instance and best-effort.

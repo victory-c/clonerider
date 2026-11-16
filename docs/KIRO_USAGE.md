@@ -117,4 +117,9 @@ Full details with seeds in `docs/PBT_FINDINGS.md`. Spec bugs found in the pre-bu
 - **Also data prep (not app code):** the sample rides in `public/samples/` were privacy-scrubbed with a throwaway script outside the repo.
 - **Found while doing it:** Next 16 rejects `export const runtime` when `cacheComponents` is on (`tech.md` updated); the `deck.gl` umbrella package pulls ArcGIS/Vaadin and a telemetry postinstall, so only scoped `@deck.gl/*` packages are used.
 
+### 2026-11-16: Day-0/1 spikes S1–S6 run outside Kiro (disclosure)
+- **Tool:** Claude Code, in a throwaway copy of the repo; no spike code was committed.
+- **Result:** `docs/SPIKES.md`, summarised in `.kiro/steering/tech.md` → "Verified APIs". Findings Kiro must follow: deck.gl `interleaved: false`; MapLibre named imports + `setWorkerUrl`; `Output.object` (not `generateObject`); FIT `isFIT()` before `read()`; OpenFreeMap TileJSON source, never inline tile URLs.
+- **Left for Kiro:** S0 (hook format).
+
 <!-- `pnpm kiro:log` appends entries below this line from commit trailers. -->

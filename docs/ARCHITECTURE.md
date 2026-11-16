@@ -86,6 +86,7 @@ Dependency rule (enforced by review, ESLint rule later): `app → components →
 | Corridor matching on the present ride's polyline | Finds *partial* overlaps between different routes; linear-ish with a spatial index | DTW / Fréchet: quadratic, assumes the whole ride overlaps |
 | Narrator fills **slots** in a template; the model never writes numbers or direction words | Wrong numbers become impossible, and property tests can prove it | Free-text generation + post-hoc fact check: can still leak errors |
 | Browser voice by default, neural TTS opt-in | No cost per judge visit; works without Gateway speech access | Neural by default: cost + availability risk |
+| deck.gl overlaid (`interleaved: false`), not interleaved | Interleaved mode crashes on MapLibre 6.18 + deck.gl 9.4.1 (spike S2); trails above the map lose nothing | Interleaved: broken today |
 | Scoped `@deck.gl/*` packages, not the `deck.gl` umbrella | The umbrella pulls ArcGIS/Vaadin UI kits and a telemetry postinstall | `deck.gl` meta-package |
 | No database, no auth | Nothing to store server-side; fewer moving parts for a solo 3-week build | Accounts / saved rides: P2 at most, in IndexedDB |
 
@@ -114,7 +115,7 @@ Both routes run on the default Node.js runtime (no `runtime` export: Next 16 rej
 ## 7. State and rendering
 
 - One zustand store (`lib/replay/store.ts`) holds `ReplayState`. The animation clock advances in a single `requestAnimationFrame` loop that writes to deck.gl layer props directly; React re-renders the HUD at ≤ 10 Hz via a throttled selector.
-- The map is loaded with `next/dynamic(..., { ssr: false })`. The basemap style is committed (`public/map/haunted-style.json`), so a tile outage degrades to a plain dark background rather than breaking the replay.
+- The map is loaded with `next/dynamic(..., { ssr: false })`. deck.gl draws on its own canvas above MapLibre (`MapboxOverlay({ interleaved: false })`: interleaved mode crashes on MapLibre 6, spike S2), and MapLibre's own worker is served from `public/vendor/` via `setWorkerUrl` (`docs/SPIKES.md`). The basemap style is committed (`public/map/haunted-style.json`), so a tile outage degrades to a plain dark background rather than breaking the replay.
 
 ## 8. Testing architecture
 

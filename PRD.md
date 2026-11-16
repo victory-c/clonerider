@@ -392,7 +392,7 @@ Dropped. See Non-goals and Decisions log.
 |---|---|---|---|
 | Alignment is wrong on real messy data (lollipops, laps, tunnels, canyon GPS) | Med | High | Chord headings, heading-gated candidate choice, lap restart; PBT; ghost-lab on real pairs from Nov 19; **kill criterion Nov 20 18:00: precision < 90% → ship the manual start/end fallback (A-10)** |
 | Hook files don't load in Kiro (unverified schema) | Med | Med | Day-0 gate: create one hook in the Kiro UI, inspect the file Kiro writes, rewrite all hooks in that format before any spec task. Cut any hook whose trigger doesn't exist |
-| Integration surprises (Turbopack worker + comlink, deck.gl on maplibre-gl 6, Gateway speech, FIT encoder) | Med | High | Day-1 spikes S1–S6 (§17) and a deployed walking skeleton by Nov 18 |
+| Integration surprises (Turbopack worker + comlink, deck.gl on maplibre-gl 6, Gateway speech, FIT encoder) | ~~Med~~ Low after spikes | High | Spikes S1–S6 run Nov 16 (`docs/SPIKES.md`): worker, GPX-in-worker, FIT encode, basemap verified; deck.gl interleaved mode found broken → overlaid mode; live Gateway calls still pending. Deployed walking skeleton by Nov 18 |
 | Gateway TTS unavailable | Med | Low | Browser voice is the default; sample audio is pre-generated once (via Gateway or a direct provider SDK, decided at S3) |
 | LLM writes an ungrounded number or direction | Low | High | Impossible to render: slots + validator + template fallback; property-tested |
 | Kiro credits run out | Low–Med | High | Request credits Nov 16; Auto for routine tasks; command hooks only (no agent hooks) |
@@ -409,7 +409,7 @@ Dropped. See Non-goals and Decisions log.
 
 ## 17. Timeline (Nov 16 – Dec 4 2026, PT) — walking skeleton first, then deepen
 
-**Day-0/1 spikes** (Kiro "vibe" tasks, each with a written result in `.kiro/steering/tech.md` → "Verified APIs"):
+**Day-0/1 spikes**: **S1–S6 done Nov 16** (run outside Kiro, disclosed; results in `.kiro/steering/tech.md` → "Verified APIs" and `docs/SPIKES.md`). Two required changes came out of them: deck.gl must use `interleaved: false`, and MapLibre's worker must be served from `public/vendor/`. **S0 (hook format) still needs Kiro.** Original list:
 - **S0** Hook format: create one hook in the Kiro UI; capture what Kiro writes and what a command hook receives on STDIN.
 - **S1** Turbopack + `new Worker(new URL(...))` + comlink + Transferable through `pnpm build` on Vercel.
 - **S2** `MapboxOverlay` (interleaved) on `maplibre-gl@6.18.0` with a TripsLayer and a moving camera.
@@ -493,3 +493,4 @@ Dropped. See Non-goals and Decisions log.
 | 15 | Nov 16 | School name, student email domain and GitHub handle removed from the repo docs | Student verification belongs in the private Devpost form | Compliance minor |
 | 16 | Nov 16 | **Name decided: CloneRider** (supersedes decision 1) | Builder's choice after the Marvel name and "Ghostwriter" were ruled out for trademark reasons; web search found no conflict | Builder |
 | 17 | Nov 16 | Architecture contracts (types, zod schemas, worker API, constants, config, 501 route placeholders) written outside Kiro, disclosed; no logic | Builder asked for the architecture up front; keeping it to contracts preserves Kiro's authorship of all real implementation | Builder |
+| 18 | Nov 16 | deck.gl `MapboxOverlay` uses **`interleaved: false`**; MapLibre's worker is served from `public/vendor/`; narrator default model `anthropic/claude-haiku-5.5` | Spike S2: interleaved mode crashes on MapLibre 6.18 + deck.gl 9.4.1 (latest stable); S3c: 5.5 is in the Gateway list | Spikes |

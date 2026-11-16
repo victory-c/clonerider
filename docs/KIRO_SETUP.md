@@ -45,9 +45,13 @@ Create `.env.local` by hand (never commit) with the variables in `tech.md`, plus
 
 ---
 
-## 1. Spikes S1–S6 (Nov 16–17, Kiro vibe tasks)
-Run each spike in a fresh Kiro chat with Context7 enabled. Each one ends with a row updated in `tech.md` → Verified APIs and a commit `chore(spike): S<n> <result>`. Throwaway spike code lives on a `spike/*` branch and is not merged.
-- S1 worker + comlink + Turbopack on Vercel · S2 interleaved MapboxOverlay + TripsLayer + moving camera · S3 AI SDK v7 structured output + speech through Gateway (list speech models) · S4 xmldom + togeojson in a module worker · S5 FIT SDK encoder · S6 OpenFreeMap style → `public/map/haunted-style.json`.
+## 1. Spikes S1–S6: DONE Nov 16 (outside Kiro, disclosed)
+Results: `docs/SPIKES.md` and `tech.md` → Verified APIs. **Read SPIKES.md before the first map or narrator task.** What is still open:
+- **S0** (hook format): the gate in §0.5 above, needs Kiro.
+- **S3 live:** one real `generateText` + `Output.object` call and one `generateSpeech` call through the Gateway once a key/OIDC is set (a 2-minute Kiro vibe task; record the voice list in tech.md).
+- **S5 on a device:** load an exported course on your own bike computer before demoing "Take the ghost home".
+- **S6 asset:** recolour `styles/dark` into `public/map/haunted-style.json` (part of the `haunted-ui` spec; keep the TileJSON source URL).
+- The fixture privacy test can read zone coordinates from the gitignored `fixtures-raw/privacy-zones.json` (written when the samples were scrubbed) instead of `PRIVATE_HOME_LATLON` / `PRIVATE_WORK_LATLON`.
 
 ---
 
