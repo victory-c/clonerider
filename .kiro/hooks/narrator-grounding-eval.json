@@ -1,0 +1,16 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "narrator-grounding-eval",
+      "description": "UNVERIFIED FORMAT: replace with the file Kiro writes when recreated in the Agent Hooks UI. When narrator code, prompts or fixtures change, re-render the golden narration templates against their facts and re-validate them, and re-render the committed sample narration (no live model calls). Any unknown slot, stray digit or polarity word outside a slot fails loudly.",
+      "trigger": "PostFileSave",
+      "matcher": "(^|/)(lib/narrator/.*\\.ts|app/api/(narrate|speak)/.*\\.ts|tests/fixtures/narration/.*|public/samples/narration/.*\\.json)$",
+      "action": {
+        "type": "command",
+        "command": "pnpm -s narrator:eval"
+      },
+      "timeout": 120
+    }
+  ]
+}

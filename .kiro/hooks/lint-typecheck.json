@@ -1,0 +1,26 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "lint-on-save",
+      "description": "UNVERIFIED FORMAT: replace with the file Kiro writes when recreated in the Agent Hooks UI. After the agent saves a TS/TSX file, run cached ESLint (fast, path-free). Type-checking is deliberately NOT run on every save: mid-task, types are temporarily inconsistent across files.",
+      "trigger": "PostFileSave",
+      "matcher": "\\.(ts|tsx)$",
+      "action": {
+        "type": "command",
+        "command": "pnpm -s exec eslint --cache --max-warnings=0 ."
+      },
+      "timeout": 90
+    },
+    {
+      "name": "typecheck-after-task",
+      "description": "UNVERIFIED FORMAT and trigger name (see above). After each spec task finishes, type-check the whole project. If the Kiro IDE has no post-task trigger, move this to an agent-stop trigger or drop it and rely on the task checkpoints.",
+      "trigger": "PostTaskExec",
+      "action": {
+        "type": "command",
+        "command": "pnpm -s typecheck"
+      },
+      "timeout": 180
+    }
+  ]
+}

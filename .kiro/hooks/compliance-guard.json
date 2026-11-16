@@ -1,0 +1,27 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "kiro-dir-never-ignored",
+      "description": "UNVERIFIED FORMAT: replace with the file Kiro writes when this hook is recreated in the Agent Hooks UI (docs/KIRO_SETUP.md step 0). Kiroween rule: .kiro must never be gitignored. After the agent edits a .gitignore, fail if git would ignore any .kiro path. --no-index is required: without it, git skips ignore rules for tracked files and the check never fires.",
+      "trigger": "PostFileSave",
+      "matcher": "(^|/)\\.gitignore$",
+      "action": {
+        "type": "command",
+        "command": "if git check-ignore -q --no-index .kiro || git check-ignore -q --no-index .kiro/steering/product.md || git check-ignore -q --no-index .kiro/hooks/compliance-guard.json || git check-ignore -q --no-index .kiro/specs/ride-ingest/tasks.md; then echo 'COMPLIANCE: .kiro is now gitignored. Revert that .gitignore change immediately (Kiroween disqualifier).' >&2; exit 1; fi; echo 'compliance ok: .kiro not ignored'"
+      },
+      "timeout": 15
+    },
+    {
+      "name": "license-must-exist",
+      "description": "UNVERIFIED FORMAT (see above). Kiroween rule: an OSI license must stay at the repo root. Fail if the agent deletes LICENSE.",
+      "trigger": "PostFileDelete",
+      "matcher": "(^|/)LICENSE$",
+      "action": {
+        "type": "command",
+        "command": "test -f LICENSE || { echo 'COMPLIANCE: LICENSE was deleted. Restore it now with: git checkout -- LICENSE' >&2; exit 1; }"
+      },
+      "timeout": 15
+    }
+  ]
+}

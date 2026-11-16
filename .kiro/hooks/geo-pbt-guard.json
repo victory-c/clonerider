@@ -1,0 +1,16 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "geo-pbt-guard",
+      "description": "UNVERIFIED FORMAT: replace with the file Kiro writes when recreated in the Agent Hooks UI. After the agent saves a geo/align/ingest/worker file, re-run the unit and property tests for those folders (path-free, so it does not depend on any file-path templating). Slow suites (bench, real pairs) are excluded here and run in pnpm test and /judge-check. Output, including shrunk counterexamples, goes back to the agent.",
+      "trigger": "PostFileSave",
+      "matcher": "(^|/)(lib/(geo|align|ingest|export)/.*|workers/.*)\\.ts$",
+      "action": {
+        "type": "command",
+        "command": "pnpm -s vitest run lib/geo lib/align lib/ingest lib/export workers --exclude '**/bench.test.ts' --exclude '**/real-pairs.test.ts'"
+      },
+      "timeout": 180
+    }
+  ]
+}

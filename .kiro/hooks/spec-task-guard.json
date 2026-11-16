@@ -1,0 +1,16 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "spec-task-property-link",
+      "description": "UNVERIFIED FORMAT: replace with the file Kiro writes when recreated in the Agent Hooks UI. When the agent writes a spec's tasks.md or design.md, check traceability: every property in design.md has a required (non-optional) test task that names it and its 'Validates' requirements, and every task cites requirement ids. The checker script is created in haunted-ui task 1 (scripts/spec-lint.ts); until it exists the hook says so instead of passing silently.",
+      "trigger": "PostFileSave",
+      "matcher": "(^|/)\\.kiro/specs/[^/]+/(tasks|design)\\.md$",
+      "action": {
+        "type": "command",
+        "command": "if [ -f scripts/spec-lint.ts ]; then pnpm -s spec:lint; else echo 'spec-lint not created yet (haunted-ui task 1): property links NOT checked' >&2; exit 1; fi"
+      },
+      "timeout": 60
+    }
+  ]
+}
