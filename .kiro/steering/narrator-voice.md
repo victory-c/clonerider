@@ -1,6 +1,6 @@
 ---
 inclusion: fileMatch
-fileMatchPattern: ["lib/narrator/**/*.ts", "app/api/narrate/**/*.ts", "app/api/speak/**/*.ts", "components/narrator/**/*.tsx", "tests/fixtures/narration/**", "public/samples/narration/**"]
+fileMatchPattern: ["lib/narrator/**/*.ts", "app/api/narrate/**/*.ts", "components/narrator/**/*.tsx", "tests/fixtures/narration/**", "public/samples/narration/**"]
 ---
 
 # The Whisper: narrator voice and grounding rules
@@ -35,6 +35,6 @@ fileMatchPattern: ["lib/narrator/**/*.ts", "app/api/narrate/**/*.ts", "app/api/s
 
 Perspective rule: templates use **"I" (the ghost) as the subject of every direction slot**; for "you" sentences, use the `you:` prefix (`{you:descent.gapDelta:gained}`), which flips the sign (as in the descent sentence above). The renderer and its property test own this rule.
 
-## TTS delivery
-- Default voice: browser `SpeechSynthesis`, pitch 0.6, rate 0.85. Captions always rendered.
-- Neural voice (opt-in toggle; sample audio pre-generated): provider and voice decided by spike S3 and recorded in `tech.md`. Provider-specific tags (e.g. `[whispers]`) are added only in the TTS request text, after rendering and validation, and stripped from captions.
+## Voice delivery
+- The only voice is the browser's `SpeechSynthesis` (pitch 0.6, rate 0.85), with captions always rendered. There is no text-to-speech provider (decision Nov 16: Claude API key only).
+- Pick an English voice if available (`speechSynthesis.getVoices()` loads asynchronously: wait for `voiceschanged`); fall back to captions only if speech is unavailable.

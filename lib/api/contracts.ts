@@ -15,12 +15,6 @@ export const NarrateResponse = z.object({
 });
 export type NarrateResponse = z.infer<typeof NarrateResponse>;
 
-export const SpeakRequest = z.object({
-  text: z.string().min(1).max(1200),
-  voice: z.string().max(40).optional(),
-});
-export type SpeakRequest = z.infer<typeof SpeakRequest>;
-
 export const ApiError = z.object({
   error: z.enum(['BadRequest', 'TooLarge', 'RateLimited', 'Disabled', 'NotImplemented', 'Upstream']),
   message: z.string(),

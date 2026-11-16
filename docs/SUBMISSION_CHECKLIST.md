@@ -43,7 +43,7 @@ Re-read the rules page once more on Dec 1 in case anything changed.
 - [ ] Production URL works **logged out, in incognito**, on desktop and phone
 - [ ] "Summon the sample ghosts" reaches a narrated replay in ≤ 20 s
 - [ ] Narration works with AI disabled (template + pre-generated audio)
-- [ ] **AI Gateway spend limit** set to last **until Jan 29 2027** (the real cost guard); kill switch and best-effort rate limit configured
+- [ ] **Anthropic Console monthly spend limit** set, and `ANTHROPIC_API_KEY` in Vercel env, lasting **until Jan 29 2027** (the real cost guard); kill switch and best-effort rate limit configured
 - [ ] If any login is ever needed, test credentials go in the private Devpost field (we plan none)
 
 ## F. Demo video
@@ -51,7 +51,6 @@ Re-read the rules page once more on Dec 1 in case anything changed.
 - [ ] Uploaded to **YouTube, public** (not unlisted); the link opens logged out
 - [ ] Shows the app actually running
 - [ ] **No copyrighted music**; no third-party trademarks or logos: no brand logos on bikes, kit, helmets, head units or watch faces (blurred or cropped); browser chrome cropped
-- [ ] TTS provider's terms allow public use of the generated ghost voice (logged in `docs/ASSETS.md`)
 - [ ] Captions burned in or uploaded
 
 ## G. Devpost form

@@ -34,7 +34,7 @@ The look borrows from cycling night photography: long-exposure light trails on a
 - **Contrast:** body text ≥ 4.5:1. Never text on top of a glow or trail.
 - **Ahead/behind:** always word + arrow + sign + number, e.g. `AHEAD ▲ +0:08` / `BEHIND ▼ −0:12` / `LEVEL ●`.
 - **Motion:** trail glow (two TripsLayers: wide alpha 0.25 + thin alpha 0.9), chase camera, faint fog at the edges (opacity ≤ 0.15), flicker only on lead changes. `prefers-reduced-motion` OR "Less spooky" → static overview camera, no flicker or fog drift, trails still drawn.
-- **Sound:** none by default (SFX are P2). Neural voice only after an explicit toggle.
+- **Sound:** none by default (SFX are P2). Voice (browser speech) only after an explicit toggle or the user pressing play.
 - **Icons:** Lucide only. Ghost illustrations are original SVGs in `components/ui/ghosts/`.
 - **Map:** the committed style `public/map/haunted-style.json`; attribution always visible, never covered by the HUD or a bottom sheet.
 - **Layout (mobile-first, 375 × 812, 16 px gutter):** HUD top; map middle; scrubber + gap chart bottom; captions above the scrubber; Receipts as a bottom sheet. No horizontal scroll; touch targets ≥ 44 px. The `haunted-ui` spec holds the wireframe; follow it.

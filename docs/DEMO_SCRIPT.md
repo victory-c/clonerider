@@ -10,7 +10,7 @@
 - B-roll must show **no visible brand logos**: bike frame, kit, helmet, head unit, watch faces. Blur them, crop them out, or use the map animation instead.
 - Crop browser chrome to the page. No browser, OS or device branding on screen.
 - The bike-computer shot for "Take the ghost home" shows only a cropped screen, never the device's brand.
-- Before using the generated ghost voice, confirm the TTS provider's terms allow public use of the output; record it in `docs/ASSETS.md`.
+- The ghost's voice in the app is the browser's built-in voice; for the video, record the narration lines yourself or screen-record the browser voice.
 
 **Recording setup:** 1920×1080, 100% zoom, incognito, production URL. OBS at 60 fps. Voice-over recorded separately. SFX only from CC0 sources in `docs/ASSETS.md`; no music, or a logged CC0 track.
 

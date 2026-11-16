@@ -53,13 +53,14 @@ Copy the worker file at build/install time (e.g. a `postinstall` or `prebuild` s
 - **Structured output:** `generateText({ model, output: Output.object({ schema }) })` → `result.output`. `generateObject` / `streamObject` are **deprecated** (`docs/08-migration-guides/24-migration-guide-6-0.mdx`).
 - **Speech:** `generateSpeech({ model, text, voice })` (stable; `experimental_streamSpeech` for streaming). `model` is typed `string | SpeechModel`, so a plain Gateway string works; `gateway.speech(id)` also exists. Audio in `result.audio.uint8Array` / `.base64`.
 - **Gateway speech ids** (from `@ai-sdk/gateway` types): `openai/tts-1`, `openai/tts-1-hd`, `elevenlabs/eleven-flash-v2.5`, `elevenlabs/eleven-v3`, `google/gemini-3.8-flash-tts`, `microsoft/mai-voice-2`, …
-- **Narrator model:** `anthropic/claude-haiku-5.5` is in the Gateway list; it replaces the 4.5 default.
-- **Still to do live** (needs an AI Gateway key / Vercel OIDC): one `generateText` + `Output.object` call and one `generateSpeech` call, to confirm team access and voice names.
+- **Narrator model:** Haiku 5.5. **Update (Nov 16, later): the builder chose a Claude API key directly, with no Gateway and no TTS.** Use `@ai-sdk/anthropic@4.0.105` (`claude-haiku-5-5`, reads `ANTHROPIC_API_KEY`); its default `structuredOutputMode: 'auto'` uses native structured outputs. The speech notes above are kept for reference only.
+- **Still to do live** (needs `ANTHROPIC_API_KEY` in `.env.local`): one `generateText` + `Output.object` call.
 
 ```ts
 import { generateText, Output } from 'ai';
+import { anthropic } from '@ai-sdk/anthropic';
 const { output } = await generateText({
-  model: process.env.NARRATOR_MODEL ?? 'anthropic/claude-haiku-5.5',
+  model: anthropic(process.env.NARRATOR_MODEL ?? 'claude-haiku-5-5'),
   output: Output.object({ schema: NarrationTemplate }),
   system, prompt, maxOutputTokens: 600, temperature: 0.7, abortSignal: AbortSignal.timeout(15_000),
 });

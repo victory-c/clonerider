@@ -19,22 +19,21 @@ flowchart LR
   end
   subgraph Vercel["Vercel (Node runtime)"]
     NAR["/api/narrate<br/>guard → LLM template → validate → render"]
-    SPK["/api/speak (opt-in)"]
   end
-  GW[("Vercel AI Gateway")]
+  GW[("Claude API<br/>(@ai-sdk/anthropic)")]
   TILES[("OpenFreeMap tiles")]
 
   UI -- "File bytes (transfer)" --> ING
   ING --> ALN --> FCT
   ALN -- "Alignment (typed arrays, transfer)" --> ST --> MAP
   FCT -- "RideFacts only: no coordinates" --> NAR --> GW
-  UI --> SPK --> GW
+  ST -- "rendered lines" --> VOX["Browser speechSynthesis<br/>+ captions"]
   MAP --> TILES
   ALN --> EXP -- ".fit download" --> UI
 ```
 
 **Three hard boundaries:**
-1. **Privacy boundary:** ride files, coordinates and file names never leave the browser. The only payload that crosses the network is `RideFacts` (numbers + labels, zod-validated, ≤ 16 kB) and narration text for `/api/speak`.
+1. **Privacy boundary:** ride files, coordinates and file names never leave the browser. The only payload that crosses the network is `RideFacts` (numbers + labels, zod-validated, ≤ 16 kB). Speech is the browser's own `speechSynthesis`, so narration text never leaves the device either.
 2. **Thread boundary:** parsing and alignment run in one module worker behind the `RideWorkerApi` contract (`workers/rideWorkerApi.ts`). The main thread only renders.
 3. **Purity boundary:** `lib/` is pure TypeScript with no React, DOM, `window` or `document`. The same code runs in the worker, in Vitest/fast-check, and in the dev-only `ghost-lab` MCP server.
 
@@ -53,7 +52,7 @@ flowchart LR
 | 9 | Replay | `lib/replay/*`, `components/replay/*` | `Alignment` → frames | `ReplayState` |
 | 10 | Facts | `lib/narrator/facts.ts` | `Alignment` + `Climb[]` → `RideFacts` | `RideFacts` |
 | 11 | Narrate | `app/api/narrate` | `RideFacts` → `NarrationScript` | `NarrateRequest`, `NarrateResponse` |
-| 12 | Voice | browser `speechSynthesis` (default) or `app/api/speak` | text → audio | `SpeakRequest` |
+| 12 | Voice | browser `speechSynthesis` + captions | text → speech | — |
 | 13 | Take the ghost home (P1) | `lib/export/fitCourse.ts` | `Alignment` → `.fit` bytes | `FitCourseWriter` |
 
 ## 3. Modules and ownership
@@ -85,7 +84,7 @@ Dependency rule (enforced by review, ESLint rule later): `app → components →
 | `cheap-ruler` + `flatbush` in hot paths, Turf only in tests | Speed budgets (align 10k×10k ≤ 150 ms); Turf becomes the test oracle | Turf everywhere: too slow in loops |
 | Corridor matching on the present ride's polyline | Finds *partial* overlaps between different routes; linear-ish with a spatial index | DTW / Fréchet: quadratic, assumes the whole ride overlaps |
 | Narrator fills **slots** in a template; the model never writes numbers or direction words | Wrong numbers become impossible, and property tests can prove it | Free-text generation + post-hoc fact check: can still leak errors |
-| Browser voice by default, neural TTS opt-in | No cost per judge visit; works without Gateway speech access | Neural by default: cost + availability risk |
+| Claude API key directly; browser voice only | The narrator is the only LLM call, so one key is simplest; no per-visit voice cost; Anthropic has no TTS | Vercel AI Gateway + neural TTS: extra account, config and cost for a P1 extra |
 | deck.gl overlaid (`interleaved: false`), not interleaved | Interleaved mode crashes on MapLibre 6.18 + deck.gl 9.4.1 (spike S2); trails above the map lose nothing | Interleaved: broken today |
 | Scoped `@deck.gl/*` packages, not the `deck.gl` umbrella | The umbrella pulls ArcGIS/Vaadin UI kits and a telemetry postinstall | `deck.gl` meta-package |
 | No database, no auth | Nothing to store server-side; fewer moving parts for a solo 3-week build | Accounts / saved rides: P2 at most, in IndexedDB |
@@ -107,10 +106,9 @@ Tracks stay **inside the worker** after ingest (keyed by `Track.id`); only summa
 
 | Route | Method | Request | Response | Guards |
 |---|---|---|---|---|
-| `/api/narrate` | POST | `NarrateRequest` = `{ facts: RideFacts, persona? }` | `NarrateResponse` = `{ script, source: 'llm' \| 'template' }` | zod, 16 kB cap, `NARRATOR_ENABLED` kill switch, best-effort rate limit, Gateway spend limit |
-| `/api/speak` | POST | `SpeakRequest` = `{ text ≤ 1200 chars, voice? }` | `audio/mpeg` | same, plus opt-in toggle in UI |
+| `/api/narrate` | POST | `NarrateRequest` = `{ facts: RideFacts, persona? }` | `NarrateResponse` = `{ script, source: 'llm' \| 'template' }` | zod, 16 kB cap, `NARRATOR_ENABLED` kill switch, best-effort rate limit, Anthropic Console spend limit |
 
-Both routes run on the default Node.js runtime (no `runtime` export: Next 16 rejects it with `cacheComponents` on) and currently return **501** until the `ghost-narrator` spec implements them.
+The route runs on the default Node.js runtime (no `runtime` export: Next 16 rejects it with `cacheComponents` on) and currently return **501** until the `ghost-narrator` spec implements them.
 
 ## 7. State and rendering
 
@@ -130,15 +128,15 @@ Both routes run on the default Node.js runtime (no `runtime` export: Next 16 rej
 
 ## 9. Deployment
 
-- Vercel project from the GitHub repo; Node runtime (Fluid Compute) for both API routes.
-- Env vars: see `.env.example`. AI Gateway auth via OIDC on Vercel, `AI_GATEWAY_API_KEY` locally.
-- Set a **Gateway spend limit** before the demo goes public; it is the real cost guard.
+- Vercel project from the GitHub repo; Node runtime (Fluid Compute) for the API route.
+- Env vars: see `.env.example`. `ANTHROPIC_API_KEY` in `.env.local` locally and in Vercel project settings.
+- Set a **monthly spend limit in the Anthropic Console** before the demo goes public; it is the real cost guard. Without a key (or with `NARRATOR_ENABLED=false`) the app still narrates with the deterministic template narrator.
 - The app must stay up through the judging period (to Jan 29 2027).
 
 ## 10. Directory map (current state)
 
 ```
-app/                 layout, landing placeholder, /ride placeholder, /api/narrate + /api/speak (501)
+app/                 layout, landing placeholder, /ride placeholder, /api/narrate (501)
 components/          (empty; haunted-ui + replay-viewer specs)
 lib/
   brand.ts           ✅

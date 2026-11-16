@@ -38,7 +38,7 @@ The committed hook files use a guessed `v1` JSON shape. Kiro may not load them. 
 6. Screenshot each hook firing once (`docs/kiro-evidence/YYYY-MM-DD-hook-<name>.png`). Record the verified format in `.kiro/steering/tech.md` → Verified APIs (S0).
 
 ### 0.6 Vercel
-Import the repo; enable AI Gateway (API key, or OIDC on Vercel); **set a Gateway spend limit** that lasts until Jan 29 2027; set `NARRATOR_MODEL`. Gateway speech availability is checked in spike S3.
+Import the repo; add `ANTHROPIC_API_KEY` (and optionally `NARRATOR_MODEL`) in Vercel → Settings → Environment Variables; **set a monthly spend limit in the Anthropic Console** that lasts until Jan 29 2027.
 
 ### 0.7 Local env
 Create `.env.local` by hand (never commit) with the variables in `tech.md`, plus `PRIVATE_HOME_LATLON` / `PRIVATE_WORK_LATLON` for the fixture privacy test.
@@ -48,7 +48,7 @@ Create `.env.local` by hand (never commit) with the variables in `tech.md`, plus
 ## 1. Spikes S1–S6: DONE Nov 16 (outside Kiro, disclosed)
 Results: `docs/SPIKES.md` and `tech.md` → Verified APIs. **Read SPIKES.md before the first map or narrator task.** What is still open:
 - **S0** (hook format): the gate in §0.5 above, needs Kiro.
-- **S3 live:** one real `generateText` + `Output.object` call and one `generateSpeech` call through the Gateway once a key/OIDC is set (a 2-minute Kiro vibe task; record the voice list in tech.md).
+- **S3 live:** one real `generateText` + `Output.object` call with your Claude key in `.env.local` (a 2-minute Kiro vibe task).
 - **S5 on a device:** load an exported course on your own bike computer before demoing "Take the ghost home".
 - **S6 asset:** recolour `styles/dark` into `public/map/haunted-style.json` (part of the `haunted-ui` spec; keep the TileJSON source URL).
 - The fixture privacy test can read zone coordinates from the gitignored `fixtures-raw/privacy-zones.json` (written when the samples were scrubbed) instead of `PRIVATE_HOME_LATLON` / `PRIVATE_WORK_LATLON`.

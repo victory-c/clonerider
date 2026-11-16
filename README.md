@@ -15,7 +15,7 @@ A round trip through worlds that don't normally touch:
 2. **Geometry:** corridor map-matching that finds shared road across hundreds of rides
 3. **WebGL:** MapLibre + deck.gl chase-camera replay with a live gap ribbon
 4. **Language model:** narration written as slot templates, so every number and every "ahead/behind" is filled in from computed facts, never invented
-5. **Voice:** spoken by the browser voice or a neural voice
+5. **Voice:** spoken by your browser's built-in voice, with captions
 6. **Back to the device:** the shared stretch and your ghost's timing, encoded as a `.FIT` course your bike computer can pace you against
 
 ## How it is different
@@ -47,7 +47,7 @@ Cyclists and triathletes who repeat local roads. _Quotes from our 5-rider test g
 ## Run locally (placeholder; the scaffold lands in the first build session)
 ```bash
 pnpm install
-cp .env.example .env.local   # AI_GATEWAY_API_KEY, NARRATOR_MODEL, TTS_MODEL (optional: the app works without them)
+cp .env.example .env.local   # ANTHROPIC_API_KEY, NARRATOR_MODEL (optional: without a key the app uses its template narrator)
 pnpm dev                     # http://localhost:3000
 pnpm test                    # unit + property-based tests (Vitest + fast-check)
 ```

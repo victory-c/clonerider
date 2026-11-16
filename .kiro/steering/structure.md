@@ -16,8 +16,7 @@ No `src/` directory (the scaffold uses `--no-src-dir`). Create folders only when
 │   ├── about/page.tsx            # Privacy, credits, "Built with Kiro"
 │   ├── licenses/page.tsx         # Font/asset licences
 │   └── api/
-│       ├── narrate/route.ts      # POST RideFacts -> rendered NarrationScript (Node runtime)
-│       └── speak/route.ts        # POST text -> audio (Node runtime, opt-in neural voice)
+│       └── narrate/route.ts      # POST RideFacts -> rendered NarrationScript (Node runtime)
 ├── components/
 │   ├── upload/                   # DropZone, ArchiveDrop (P1), PrivacyQuickZone, SampleGhostsButton
 │   ├── replay/                   # ReplayMap (dynamic, ssr:false), ChaseCamera, GapRibbon, Scrubber, GapHud, GapChart, RunPicker
@@ -26,7 +25,7 @@ No `src/` directory (the scaffold uses `--no-src-dir`). Create folders only when
 ├── lib/                          # PURE TypeScript, no React/DOM (runs in worker, tests, MCP)
 │   ├── brand.ts                  # APP_NAME, STORAGE_PREFIX (the only place the product name lives)
 │   ├── result.ts                 # Result<T, E>, ok(), err()
-│   ├── api/contracts.ts          # zod payloads for app/api/* (NarrateRequest/Response, SpeakRequest, ApiError)
+│   ├── api/contracts.ts          # zod payloads for app/api/* (NarrateRequest/Response, ApiError)
 │   ├── ingest/                   # fit.ts, gpx.ts, normalize.ts, pauses.ts, privacy.ts, archive.ts (P1), types.ts
 │   ├── geo/                      # ruler.ts, resample.ts, heading.ts, polyline.ts
 │   ├── align/                    # corridor.ts, runs.ts, routeAxis.ts, gap.ts, climbs.ts, archiveSearch.ts (P1), index.ts
